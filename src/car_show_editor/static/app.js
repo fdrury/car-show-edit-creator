@@ -924,6 +924,10 @@ function renderArrange() {
         <div class="preview-cursor" id="preview-cursor">
           <div class="preview-cursor-handle" id="preview-cursor-handle" title="Drag to scrub (when paused)"></div>
         </div>
+        <div class="arrange-col arrange-col-ruler">
+          <h3>—</h3>
+          <div class="col-stack" id="col-ruler"></div>
+        </div>
         <div class="arrange-col arrange-col-top" data-row="top">
           <h3>Top row</h3>
           <div class="col-stack" id="col-top"></div>
@@ -1054,6 +1058,26 @@ function paintColumns() {
 
   topIdx.forEach(i => colTop.appendChild(blockFor(i, lens[i])));
   botIdx.forEach(i => colBot.appendChild(blockFor(i, lens[i])));
+
+  // Ruler column: measure.beat labels at every beat (gold-highlighted on measure starts).
+  const ruler = $("#col-ruler");
+  if (ruler) {
+    ruler.innerHTML = "";
+    const topTotal = topIdx.reduce((acc, i) => acc + lens[i], 0);
+    const botTotal = botIdx.reduce((acc, i) => acc + lens[i], 0);
+    const totalBeats = Math.max(topTotal, botTotal);
+    for (let b = 0; b < totalBeats; b += 0.5) {
+      // Skip half-beat ticks (they'd just clutter); only label whole beats.
+      if (b % 1 !== 0) continue;
+      const measure = Math.floor(b / 4) + 1;
+      const beatInMeasure = (b % 4) + 1;
+      const tick = document.createElement("div");
+      tick.className = "ruler-tick" + (beatInMeasure === 1 ? " ruler-measure" : "");
+      tick.style.height = PIXELS_PER_BEAT + "px";
+      tick.textContent = `${measure}.${beatInMeasure}`;
+      ruler.appendChild(tick);
+    }
+  }
 
   // Empty-drop area at end of each column (for dropping at the end)
   for (const col of [colTop, colBot]) {

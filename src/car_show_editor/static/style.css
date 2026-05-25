@@ -135,10 +135,33 @@ canvas#waveform { width: 100%; height: 140px; background: #15151a; border-radius
 .arrange-scroll {
   overflow-y: auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 56px 1fr 1fr;
+  gap: 8px;
   align-items: start;
   position: relative;
+}
+.arrange-col-ruler {
+  background: transparent;
+  padding: 8px 2px 8px 0;
+  text-align: right;
+  font-family: monospace;
+  font-size: 10px;
+  color: #666;
+  user-select: none;
+}
+.arrange-col-ruler h3 {
+  /* spacer so the first tick aligns with row block tops */
+  visibility: hidden;
+}
+.ruler-tick {
+  line-height: 24px;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+.ruler-tick.ruler-measure {
+  color: #fc6;
+  border-top: 1px solid #3a3a40;
+  font-weight: 700;
 }
 .preview-cursor {
   position: absolute;
