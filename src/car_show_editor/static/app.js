@@ -953,8 +953,8 @@ function renderArrange() {
         </div>
         <audio id="preview-audio" preload="auto" src="${api.mediaUrl(state.projectName, p.song_path)}"></audio>
         <div class="preview-controls">
-          <label style="margin:0; font-size:12px;">From #</label>
-          <input id="preview-from" type="number" min="1" max="${p.segments.length}" value="1" style="width:60px;" />
+          <label style="margin:0; font-size:12px;">From measure</label>
+          <input id="preview-from-measure" type="number" min="1" step="0.5" value="1" style="width:60px;" title="1 = start; supports halves (e.g. 3.5)"/>
           <button id="btn-preview-play">▶ Play</button>
           <button id="btn-preview-pause" class="secondary" disabled>❚❚ Pause</button>
           <button id="btn-preview-stop" class="secondary" disabled>■ Stop</button>
@@ -1222,9 +1222,11 @@ async function moveSegmentToEnd(srcIdx, targetRow) {
 
 function wirePreview() {
   $("#btn-preview-play").onclick = () => {
-    const fromInput = $("#preview-from");
-    const fromIdx = Math.max(0, Math.min((parseInt(fromInput?.value, 10) || 1) - 1, state.project.segments.length - 1));
-    startPreview(fromIdx);
+    const fromInput = $("#preview-from-measure");
+    const m = Math.max(1, parseFloat(fromInput?.value) || 1);
+    // Measure N starts at beat (N-1)*4. Convert to output-timeline seconds via beat_to_time.
+    const fromTime = Math.max(0, beatToTime(state.project, (m - 1) * 4));
+    startPreview(fromTime);
   };
   $("#btn-preview-pause").onclick = () => {
     if (!arrangePreview) return;
@@ -1259,12 +1261,12 @@ function resumePreview() {
   if (cursor) cursor.classList.remove("paused");
 }
 
-function startPreview(fromIdx = 0) {
+function startPreview(fromTime = 0) {
   stopPreview();
   const p = state.project;
   const { rows, lens, segScreenSec, starts, beatDur, outDur } = computeArrangement();
   const songStart = p.beat_times[p.start_beat_index] || 0;
-  const segOffset = (fromIdx >= 0 && fromIdx < starts.length) ? starts[fromIdx] : 0;
+  const segOffset = Math.max(0, fromTime);
 
   const audio = $("#preview-audio");
   const nowEl = $("#preview-now");
@@ -1409,12 +1411,11 @@ function startPreview(fromIdx = 0) {
     s.listPos = newListPos;
   }
 
-  // Past-end-of-song guard: if the requested start is past where the song will play,
-  // tell the user instead of silently starting from the beginning (audio gets clamped + ended fires).
+  // Past-end-of-song guard.
   const songRemaining = Math.max(0, p.duration - songStart);
   if (segOffset >= songRemaining - 0.05) {
     const nowEarly = $("#preview-now");
-    if (nowEarly) nowEarly.textContent = `seg #${fromIdx + 1} starts past end of song (${segOffset.toFixed(1)}s ≥ ${songRemaining.toFixed(1)}s available)`;
+    if (nowEarly) nowEarly.textContent = `start (${segOffset.toFixed(1)}s) is past end of song (${songRemaining.toFixed(1)}s available)`;
     return;
   }
 
