@@ -924,13 +924,13 @@ function renderArrange() {
         <div class="preview-cursor" id="preview-cursor">
           <div class="preview-cursor-handle" id="preview-cursor-handle" title="Drag to scrub (when paused)"></div>
         </div>
-        <div class="arrange-col arrange-col-ruler">
-          <h3>—</h3>
-          <div class="col-stack" id="col-ruler"></div>
-        </div>
         <div class="arrange-col arrange-col-top" data-row="top">
           <h3>Top row</h3>
           <div class="col-stack" id="col-top"></div>
+        </div>
+        <div class="arrange-col arrange-col-ruler">
+          <h3>—</h3>
+          <div class="col-stack" id="col-ruler"></div>
         </div>
         <div class="arrange-col arrange-col-bot" data-row="bottom">
           <h3>Bottom row</h3>

@@ -135,15 +135,15 @@ canvas#waveform { width: 100%; height: 140px; background: #15151a; border-radius
 .arrange-scroll {
   overflow-y: auto;
   display: grid;
-  grid-template-columns: 56px 1fr 1fr;
+  grid-template-columns: 1fr 56px 1fr;
   gap: 8px;
   align-items: start;
   position: relative;
 }
 .arrange-col-ruler {
   background: transparent;
-  padding: 8px 2px 8px 0;
-  text-align: right;
+  padding: 8px 2px;
+  text-align: center;
   font-family: monospace;
   font-size: 10px;
   color: #666;
@@ -155,7 +155,6 @@ canvas#waveform { width: 100%; height: 140px; background: #15151a; border-radius
 }
 .ruler-tick {
   line-height: 24px;
-  padding-right: 4px;
   box-sizing: border-box;
 }
 .ruler-tick.ruler-measure {
