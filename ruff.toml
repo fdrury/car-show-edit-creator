@@ -1,0 +1,33 @@
+# Strictest practical ruleset: enable every selectable group, then ignore a small
+# set of stylistic rules that fight Pydantic/FastAPI idioms or duplicate type-checker
+# coverage.
+target-version = "py310"
+line-length = 120
+
+[lint]
+select = ["ALL"]
+ignore = [
+  "D",        # docstring-style rules — we deliberately keep docstrings minimal
+  "ANN",      # type-annotation completeness — mypy/pyright cover this better
+  "COM812",   # trailing-comma — fights formatter
+  "ISC001",   # implicit-string-concat — formatter conflict
+  "S603",     # subprocess-without-shell-equals-true — we always pass argv lists
+  "S607",     # subprocess-with-partial-path — ffmpeg comes from PATH/winget by design
+  "PLR0913",  # too-many-arguments — fine for our helpers
+  "PLR2004",  # magic-value-comparison — acceptable in render math
+  "EM",       # exception-message style — we want plain inline messages
+  "TRY003",   # long exception messages
+  "FBT",      # boolean positional args — pydantic models naturally have them
+  "TID252",   # relative imports OK inside our package
+  "INP001",   # implicit-namespace-package — tests/ is intentional
+  "S311",     # pseudo-random ok for non-crypto id generation
+]
+
+[lint.per-file-ignores]
+"tests/*"   = [
+  "S101", "T201", "BLE001", "S310",   # asserts, prints, broad-except, http calls in tests
+  "PT018",                            # compound asserts are clearer than split ones for cmd-shape checks
+  "PLC0415",                          # nested imports OK in tests that mutate module-level state
+  "TC003",                            # Path needs runtime import for fixture annotations
+  "RUF002",                           # × / — in docstrings is fine
+]

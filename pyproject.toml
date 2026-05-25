@@ -1,0 +1,20 @@
+[project]
+name = "car-show-editor"
+version = "0.1.0"
+description = "Beat-synced car show video editor for Instagram portrait"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "librosa",
+    "soundfile",
+    "numpy",
+    "pydantic",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
